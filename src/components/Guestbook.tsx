@@ -170,8 +170,8 @@ export function Guestbook() {
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         
-        {/* SUBMISSION FORM (7/12 layout) */}
-        <div className="md:col-span-7 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-6 shadow-xl relative overflow-hidden">
+        {/* SUBMISSION FORM (Centered layout for privacy) */}
+        <div className="md:col-span-12 max-w-2xl mx-auto w-full bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-6 shadow-xl relative overflow-hidden">
           
           <div className="absolute right-0 top-0 w-32 h-32 bg-amber-500/5 blur-3xl rounded-full pointer-events-none" />
 
@@ -235,7 +235,7 @@ export function Guestbook() {
                 </div>
                 <div>
                   <p className="font-bold">Transmission Succeeded!</p>
-                  <p className="text-green-400/80">Your wish is securely stored in Aditya's constellation database.</p>
+                  <p className="text-green-400/80">Your wish is securely stored in Aditya's private database.</p>
                 </div>
               </motion.div>
             )}
@@ -259,116 +259,67 @@ export function Guestbook() {
           </AnimatePresence>
         </div>
 
-        {/* FEED & TRANSFER PORT (5/12 layout) */}
-        <div className="md:col-span-5 space-y-6">
-          
-          {/* Recent Transmissions list */}
-          <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-5 shadow-xl max-h-[310px] overflow-y-auto flex flex-col custom-scrollbar">
-            <h4 className="text-[10px] font-mono uppercase tracking-widest text-slate-400 mb-3 flex items-center gap-1.5 font-bold">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-              Recent Constellations
+        {/* ADMIN PORTAL (Hidden hints) */}
+        <div className="md:col-span-12 max-w-2xl mx-auto w-full mt-4 bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-5 shadow-xl relative overflow-hidden text-left">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <h4 className="text-[10px] font-mono uppercase tracking-widest text-slate-500 flex items-center gap-2 font-bold">
+              <Terminal className="w-3.5 h-3.5" />
+              Secure Terminal Access
             </h4>
-
-            {wishes.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-center">
-                <Heart className="w-8 h-8 text-white/10 mb-2 animate-pulse" />
-                <p className="text-xs text-slate-500">The sky is currently silent.<br />Be the first to submit a wish!</p>
-              </div>
-            ) : (
-              <div className="space-y-3.5">
-                {wishes.map((w) => (
-                  <div key={w.id} className="p-3 bg-[#02040a]/40 border border-white/5 rounded-xl text-left hover:border-amber-500/20 transition-all">
-                    <div className="flex justify-between items-start mb-1 gap-2">
-                      <span className="text-xs font-mono font-bold text-amber-200">
-                        {w.name}
-                      </span>
-                      <span className="text-[8px] font-mono text-white/30 uppercase">
-                        {w.createdAt?.seconds 
-                          ? new Date(w.createdAt.seconds * 1000).toLocaleDateString(undefined, {month: 'short', day: 'numeric'})
-                          : 'Recent'
-                        }
-                      </span>
-                    </div>
-                    <p className="text-slate-300 text-xs font-sans leading-relaxed break-words">
-                      “{w.message}”
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
-          {/* ADITYA'S LOCAL DATA TRANSFER HUB (Under cryptographic lock to keep UI beautifully tidy) */}
-          <div className="bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-5 shadow-xl relative overflow-hidden text-left">
-            <div className="absolute right-0 bottom-0 w-24 h-24 bg-blue-500/5 blur-3xl rounded-full pointer-events-none" />
-
-            <div className="flex items-center justify-between gap-3 mb-3">
-              <h4 className="text-[10px] font-mono uppercase tracking-widest text-amber-400 flex items-center gap-2 font-bold">
-                <Terminal className="w-3.5 h-3.5" />
-                Aditya's Data Transfer Portal
-              </h4>
-              <span className="text-[8px] font-mono bg-blue-500/15 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full uppercase">
-                Offline Sync ready
-              </span>
+          {!isAdminUnlocked ? (
+            <div className="space-y-3">
+              <form onSubmit={handleUnlockAdmin} className="flex gap-2">
+                <input
+                  type="password"
+                  placeholder="Enter passphrase..."
+                  value={passphrase}
+                  onChange={(e) => setPassphrase(e.target.value)}
+                  className="flex-grow px-3 py-2 bg-[#02040a]/80 border border-white/10 rounded-lg text-xs text-white placeholder-slate-600 focus:outline-none focus:border-slate-500 transition-all font-mono"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-slate-800 hover:bg-white hover:text-black text-slate-300 font-semibold text-[10px] uppercase font-mono tracking-widest rounded-lg cursor-pointer transition-all"
+                >
+                  Unlock
+                </button>
+              </form>
             </div>
-
-            {!isAdminUnlocked ? (
-              <div className="space-y-3">
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Enter decryption passphrase to download submitted database wishes directly to your local system as formatted JSON.
-                </p>
-                <form onSubmit={handleUnlockAdmin} className="flex gap-2">
-                  <input
-                    type="password"
-                    placeholder="Enter pass (e.g. 'aditya')"
-                    value={passphrase}
-                    onChange={(e) => setPassphrase(e.target.value)}
-                    className="flex-grow px-3 py-2 bg-[#02040a]/80 border border-white/10 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 transition-all font-mono"
-                  />
-                  <button
-                    type="submit"
-                    className="px-4 py-2 bg-white text-black font-semibold text-[10px] uppercase font-mono tracking-widest rounded-lg cursor-pointer hover:bg-amber-400 transition-all"
-                  >
-                    Unlock
-                  </button>
-                </form>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-[11px] text-green-300 flex items-center gap-1.5 font-bold">
+                <Check className="w-4 h-4" />
+                Access Granted. Ready for export.
+              </p>
+              <div className="grid grid-cols-2 gap-2.5">
+                <button
+                  onClick={handleExportJSON}
+                  className="flex items-center justify-center gap-2 p-2.5 bg-[#02040a]/80 border border-white/10 rounded-xl hover:border-amber-400 hover:text-amber-300 text-[10px] font-mono tracking-wider text-slate-300 transition-all uppercase cursor-pointer"
+                  title="Generate and download wishes directly as a .json file"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download JSON</span>
+                </button>
+                <button
+                  onClick={handleCopyJSON}
+                  className="flex items-center justify-center gap-2 p-2.5 bg-[#02040a]/80 border border-white/10 rounded-xl hover:border-amber-400 hover:text-amber-300 text-[10px] font-mono tracking-wider text-slate-300 transition-all uppercase cursor-pointer"
+                  title="Copy formatted wishes list directly to clipboard"
+                >
+                  {isCopied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{isCopied ? 'Copied!' : 'Copy to Clip'}</span>
+                </button>
               </div>
-            ) : (
-              <div className="space-y-4">
-                <p className="text-[11px] text-green-300 flex items-center gap-1.5 font-bold">
-                  <Check className="w-4 h-4" />
-                  Terminal Identity Decrypted
-                </p>
-                <div className="grid grid-cols-2 gap-2.5">
-                  <button
-                    onClick={handleExportJSON}
-                    className="flex items-center justify-center gap-2 p-2.5 bg-[#02040a]/80 border border-white/10 rounded-xl hover:border-amber-400 hover:text-amber-300 text-[10px] font-mono tracking-wider text-slate-300 transition-all uppercase cursor-pointer"
-                    title="Generate and download wishes directly as a .json file"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download JSON</span>
-                  </button>
-                  <button
-                    onClick={handleCopyJSON}
-                    className="flex items-center justify-center gap-2 p-2.5 bg-[#02040a]/80 border border-white/10 rounded-xl hover:border-amber-400 hover:text-amber-300 text-[10px] font-mono tracking-wider text-slate-300 transition-all uppercase cursor-pointer"
-                    title="Copy formatted wishes list directly to clipboard"
-                  >
-                    {isCopied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
-                    <span>{isCopied ? 'Copied!' : 'Copy to Clip'}</span>
-                  </button>
-                </div>
-                <div className="text-center pt-1 border-t border-white/5">
-                  <button
-                    onClick={() => setIsAdminUnlocked(false)}
-                    className="text-[9px] font-mono text-white/30 hover:text-white uppercase tracking-wider transition-colors"
-                  >
-                    Lock Transfer Portal
-                  </button>
-                </div>
+              <div className="text-center pt-1 border-t border-white/5">
+                <button
+                  onClick={() => setIsAdminUnlocked(false)}
+                  className="text-[9px] font-mono text-slate-500 hover:text-slate-300 uppercase tracking-wider transition-colors"
+                >
+                  Lock Terminal
+                </button>
               </div>
-            )}
-          </div>
-
+            </div>
+          )}
         </div>
 
       </div>

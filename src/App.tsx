@@ -168,7 +168,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen w-full text-slate-100 font-sans flex flex-col justify-between overflow-hidden selection:bg-amber-500 selection:text-slate-900">
+    <div className="relative min-h-screen w-full text-slate-100 font-sans flex flex-col justify-between overflow-hidden selection:bg-white/10 selection:text-white">
       
       {/* 60FPS Stars & Nebula Canvas */}
       <CosmicBackground
