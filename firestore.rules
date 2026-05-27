@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global safety net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Validate if an ID is safe and of healthy length
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function isValidWish(wish) {
+      return wish.keys().hasAll(['name', 'message', 'createdAt'])
+        && wish.keys().size() == 3
+        && wish.name is string
+        && wish.name.size() > 0
+        && wish.name.size() <= 100
+        && wish.message is string
+        && wish.message.size() > 0
+        && wish.message.size() <= 2000
+        && wish.createdAt is timestamp;
+    }
+    
+    match /wishes/{wishId} {
+      // Allow any guest to fetch the list of wishes to show them on the wall
+      allow read: if true;
+      
+      // Allow any guest to submit a wish, as long as it conforms to strict schema boundaries
+      allow create: if isValidId(wishId)
+        && isValidWish(incoming())
+        // Enforce temporal integrity using the server's authoritative clock
+        && incoming().createdAt == request.time;
+        
+      // Wishes are completely immutable after creation to prevent unauthorized alteration or deletion
+      allow update, delete: if false;
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "The Crew Assembles",
+  "description": "A cinematic night sky birthday adventure for Aditya's 20th birthday where his favorite characters appear as constellation stars.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
